@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Protein 101: A Beginner's Guide for Vegetarians</title>
+<style>
+  :root{
+    --blue:#2E75B5;
+    --blue-dark:#00508c;
+    --blue-light:#e8f3fc;
+    --yellow:#FFC72C;
+    --yellow-dark:#e0a800;
+    --black:#121212;
+    --gray:#5a6472;
+    --gray-light:#f4f6f9;
+    --white:#ffffff;
+    --radius:16px;
+    --shadow: 0 10px 30px rgba(0,20,50,0.08);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    color: var(--black);
+    background: var(--white);
+    line-height:1.6;
+    overflow-x:hidden;
+  }
+  img,svg{display:block;max-width:100%;}
+  a{color:inherit;}
+
+  /* ---------- Progress bar ---------- */
+  #progress-bar{
+    position:fixed; top:0; left:0; height:4px; width:0%;
+    background: linear-gradient(90deg, var(--yellow), var(--blue));
+    z-index:9999; transition: width 0.1s ease-out;
+  }
+
+  /* ---------- Navbar ---------- */
+  nav.navbar{
+    position:sticky; top:0; z-index:999;
+    background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid #eaeef2;
+    display:flex; align-items:center; justify-content:space-between;
+    padding: 12px 24px;
+  }
+  .brand{ display:flex; align-items:center; gap:8px; font-weight:800; font-size:1.05rem; color:var(--blue-dark); }
+  .brand .dot{ width:10px;height:10px;border-radius:50%; background:var(--yellow); }
+  .nav-links{ display:flex; gap:6px; list-style:none; }
+  .nav-links a{
+    text-decoration:none; font-size:0.88rem; font-weight:600; color:var(--gray);
+    padding:8px 12px; border-radius:20px; transition: all 0.25s ease;
+    white-space:nowrap;
+  }
+  .nav-links a:hover{ background:var(--blue-light); color:var(--blue-dark); }
+  .nav-links a.active{ background:var(--blue); color:#fff; }
+  .menu-toggle{ display:none; flex-direction:column; gap:4px; background:none; border:none; cursor:pointer; }
+  .menu-toggle span{ width:24px; height:3px; background:var(--black); border-radius:2px; }
+
+  @media (max-width:880px){
+    .nav-links{
+      position:fixed; top:60px; right:-100%; height:calc(100vh - 60px);
+      background:#fff; flex-direction:column; width:70%; max-width:300px;
+      padding:20px; box-shadow:-8px 0 24px rgba(0,0,0,0.08);
+      transition:right 0.3s ease;
+    }
+    .nav-links.open{ right:0; }
+    .menu-toggle{ display:flex; }
+  }
+
+  /* ---------- Hero ---------- */
+  .hero{
+    position:relative;
+    background: radial-gradient(circle at 20% 20%, #0086e6 0%, var(--blue) 45%, var(--blue-dark) 100%);
+    color:#fff; padding: 90px 24px 110px; text-align:center; overflow:hidden;
+  }
+  .hero .blob{
+    position:absolute; border-radius:50%; opacity:0.18; background:var(--yellow);
+    animation: float 9s ease-in-out infinite;
+  }
+  .hero .blob.b1{ width:260px;height:260px; top:-80px; left:-60px; }
+  .hero .blob.b2{ width:180px;height:180px; bottom:-60px; right:-40px; animation-delay:1.5s; }
+  .hero .blob.b3{ width:120px;height:120px; top:40%; right:10%; animation-delay:3s; opacity:0.12;}
+  @keyframes float{
+    0%,100%{ transform: translateY(0) scale(1); }
+    50%{ transform: translateY(-24px) scale(1.06); }
+  }
+  .hero-content{ position:relative; z-index:2; max-width:760px; margin:0 auto; }
+  .eyebrow{
+    display:inline-block; background:var(--yellow); color:var(--black);
+    font-weight:700; font-size:0.75rem; letter-spacing:0.06em; text-transform:uppercase;
+    padding:6px 14px; border-radius:20px; margin-bottom:20px;
+    opacity:0; animation: dropIn 0.7s 0.1s forwards ease-out;
+  }
+  .hero h1{
+    font-size: clamp(2rem, 5vw, 3.2rem); font-weight:800; line-height:1.15; margin-bottom:18px;
+    opacity:0; animation: dropIn 0.7s 0.3s forwards ease-out;
+  }
+  .hero h1 span{ color:var(--yellow); }
+  .hero p.sub{
+    font-size:1.1rem; opacity:0; color:#e6f1fc; animation: dropIn 0.7s 0.5s forwards ease-out;
+  }
+  @keyframes dropIn{ from{opacity:0; transform:translateY(18px);} to{opacity:1; transform:translateY(0);} }
+  .scroll-cue{
+    margin-top:44px; display:inline-flex; flex-direction:column; align-items:center; gap:6px;
+    color:#cfe6fb; font-size:0.8rem; opacity:0; animation: dropIn 0.7s 0.8s forwards ease-out;
+  }
+  .scroll-cue .arrow{
+    width:10px;height:10px; border-right:2px solid #cfe6fb; border-bottom:2px solid #cfe6fb;
+    transform:rotate(45deg); animation: bounce 1.6s infinite;
+  }
+  @keyframes bounce{ 0%,100%{transform:translateY(0) rotate(45deg);} 50%{transform:translateY(6px) rotate(45deg);} }
+
+  /* ---------- Section shell ---------- */
+  .section{ padding: 90px 24px; max-width:1080px; margin:0 auto; }
+  .section.alt{ background:var(--gray-light); max-width:100%; }
+  .section.alt > .inner{ max-width:1080px; margin:0 auto; }
+  .section-tag{
+    display:inline-flex; align-items:center; gap:8px; font-size:0.75rem; font-weight:800;
+    letter-spacing:0.08em; text-transform:uppercase; color:var(--blue);
+    background:var(--blue-light); padding:6px 14px; border-radius:20px; margin-bottom:16px;
+  }
+  .section h2{ font-size: clamp(1.6rem,3.4vw,2.4rem); font-weight:800; margin-bottom:14px; }
+  .section > p.lead{ color:var(--gray); max-width:680px; font-size:1.05rem; margin-bottom:44px; }
+
+  /* ---------- Reveal animation ---------- */
+  .reveal{ opacity:0; transform: translateY(28px); transition: opacity 0.7s ease, transform 0.7s ease; }
+  .reveal.visible{ opacity:1; transform:translateY(0); }
+  .reveal-stagger > *{ opacity:0; transform:translateY(24px); transition: opacity 0.6s ease, transform 0.6s ease; }
+  .reveal-stagger.visible > *{ opacity:1; transform:translateY(0); }
+  .reveal-stagger.visible > *:nth-child(1){transition-delay:0.05s;}
+  .reveal-stagger.visible > *:nth-child(2){transition-delay:0.15s;}
+  .reveal-stagger.visible > *:nth-child(3){transition-delay:0.25s;}
+  .reveal-stagger.visible > *:nth-child(4){transition-delay:0.35s;}
+  .reveal-stagger.visible > *:nth-child(5){transition-delay:0.45s;}
+  .reveal-stagger.visible > *:nth-child(6){transition-delay:0.55s;}
+
+  /* ---------- Benefit cards (Why protein) ---------- */
+  .card-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:20px; }
+  .card{
+    background:#fff; border:1px solid #eef1f5; border-radius:var(--radius); padding:24px;
+    box-shadow:var(--shadow); transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  .card:hover{ transform:translateY(-6px); box-shadow:0 16px 34px rgba(0,20,50,0.12); }
+  .card .icon{
+    width:48px;height:48px; border-radius:12px; background:var(--blue-light);
+    display:flex; align-items:center; justify-content:center; font-size:1.4rem; margin-bottom:14px;
+  }
+  .card h3{ font-size:1.05rem; margin-bottom:8px; }
+  .card p{ font-size:0.92rem; color:var(--gray); }
+
+  /* ---------- Annotation / note box ---------- */
+  .note{
+    border-left:4px solid var(--yellow); background:#fffbea; padding:14px 18px;
+    border-radius:8px; font-size:0.92rem; margin:22px 0; color:#4a4326;
+  }
+  .note strong{ color:var(--black); }
+  .note.blue{ border-left-color:var(--blue); background:var(--blue-light); color:#0a3a5c; }
+
+  /* ---------- Chart section ---------- */
+  .chart-note{ font-size:0.82rem; color:var(--gray); margin-bottom:26px; }
+  .chart-wrap{ background:#fff; border-radius:var(--radius); box-shadow:var(--shadow); padding:32px 28px; border:1px solid #eef1f5; }
+  .bar-row{ display:grid; grid-template-columns:150px 1fr 60px; align-items:center; gap:14px; margin-bottom:14px; }
+  .bar-label{ font-size:0.86rem; font-weight:600; text-align:right; }
+  .bar-track{ background:#eef2f7; border-radius:8px; height:22px; overflow:hidden; position:relative; }
+  .bar-fill{
+    height:100%; width:0%; border-radius:8px;
+    background: linear-gradient(90deg, var(--blue), #4aa8e8);
+    transition: width 1.1s cubic-bezier(.2,.8,.2,1);
+    position:relative;
+  }
+  .bar-row.top .bar-fill{ background: linear-gradient(90deg, var(--yellow-dark), var(--yellow)); }
+  .bar-value{ font-size:0.86rem; font-weight:700; color:var(--blue-dark); }
+  .bar-row.top .bar-value{ color:var(--yellow-dark); }
+  .legend-line{ display:flex; gap:22px; margin-top:24px; flex-wrap:wrap; font-size:0.8rem; color:var(--gray); }
+  .legend-dot{ display:inline-block; width:10px; height:10px; border-radius:50%; margin-right:6px; vertical-align:middle; }
+
+  /* ---------- Step timeline (muscle growth / fat loss) ---------- */
+  .timeline{ position:relative; margin-top:20px; }
+  .timeline::before{
+    content:""; position:absolute; left:27px; top:10px; bottom:10px; width:3px;
+    background: linear-gradient(180deg, var(--blue), var(--yellow));
+    opacity:0.3;
+  }
+  .step{ display:flex; gap:22px; margin-bottom:36px; position:relative; }
+  .step-num{
+    flex:0 0 56px; height:56px; border-radius:50%; background:#fff; border:3px solid var(--blue);
+    color:var(--blue); font-weight:800; font-size:1.2rem; display:flex; align-items:center; justify-content:center;
+    z-index:2; transition: all 0.4s ease;
+  }
+  .step.visible .step-num{ background:var(--blue); color:#fff; transform:scale(1.05); }
+  .step-body{ padding-top:8px; }
+  .step-body h4{ font-size:1.08rem; margin-bottom:6px; }
+  .step-body p{ font-size:0.92rem; color:var(--gray); max-width:640px; }
+
+  /* ---------- Two-column highlight (muscle/fat loss stat boxes) ---------- */
+  .stat-row{ display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:16px; margin:30px 0 10px; }
+  .stat-box{
+    background:var(--black); color:#fff; border-radius:14px; padding:20px; text-align:center;
+    position:relative; overflow:hidden;
+  }
+  .stat-box::after{ content:""; position:absolute; bottom:0; left:0; width:100%; height:4px; background:var(--yellow); }
+  .stat-num{ font-size:1.8rem; font-weight:800; color:var(--yellow); }
+  .stat-label{ font-size:0.78rem; color:#cfd6de; margin-top:4px; }
+
+  /* ---------- Combo box (complementary proteins) ---------- */
+  .combo-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:16px; margin-top:20px; }
+  .combo{
+    background:#fff; border:1.5px dashed var(--blue); border-radius:12px; padding:16px; text-align:center; font-size:0.9rem; font-weight:600;
+  }
+  .combo span{ display:block; font-size:0.76rem; font-weight:500; color:var(--gray); margin-top:4px; }
+
+  /* ---------- Fibre bonus section ---------- */
+  .bonus-banner{
+    background: linear-gradient(120deg, var(--black), #262f3a);
+    color:#fff; border-radius:20px; padding:44px 34px; position:relative; overflow:hidden;
+  }
+  .bonus-banner::before{
+    content:"BONUS"; position:absolute; top:-10px; right:-30px; font-size:6rem; font-weight:900;
+    color:rgba(255,199,44,0.08); letter-spacing:0.05em;
+  }
+  .fibre-grid{ display:grid; grid-template-columns: 1fr 1fr; gap:36px; margin-top:28px; }
+  @media(max-width:760px){ .fibre-grid{ grid-template-columns:1fr; } }
+  .fibre-list{ list-style:none; }
+  .fibre-list li{
+    display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.12);
+    font-size:0.92rem;
+  }
+  .fibre-list li b{ color:var(--yellow); }
+  .fibre-type{ background:rgba(255,255,255,0.06); border-radius:12px; padding:16px; margin-bottom:14px; }
+  .fibre-type h5{ color:var(--yellow); margin-bottom:6px; font-size:0.95rem; }
+  .fibre-type p{ font-size:0.86rem; color:#d8dee5; }
+
+  /* ---------- Footer ---------- */
+  footer{ background:var(--blue-light); padding:50px 24px 40px; text-align:center; }
+  .recap-chips{ display:flex; flex-wrap:wrap; justify-content:center; gap:10px; margin:18px 0 26px; }
+  .chip{ background:#fff; border:1px solid #d7e6f5; padding:8px 16px; border-radius:20px; font-size:0.82rem; font-weight:600; color:var(--blue-dark); }
+  footer .disclaimer{ font-size:0.78rem; color:var(--gray); max-width:560px; margin:0 auto; }
+  footer .made{ margin-top:18px; font-size:0.78rem; color:#9aa7b4; }
+
+  /* ---------- Section divider icon ---------- */
+  .divider{ display:flex; align-items:center; gap:10px; margin: 0 0 8px; }
+  .divider .num-badge{
+    width:34px;height:34px; border-radius:9px; background:var(--yellow); color:var(--black);
+    font-weight:800; display:flex; align-items:center; justify-content:center; font-size:0.95rem;
+  }
+</style>
+</head>
+<body>
+
+<div id="progress-bar"></div>
+
+<nav class="navbar">
+  <div class="brand"><span class="dot"></span>Protein 101</div>
+  <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#why" class="nav-link">Why Protein</a></li>
+    <li><a href="#sources" class="nav-link">Veg Sources</a></li>
+    <li><a href="#muscle" class="nav-link">Muscle Growth</a></li>
+    <li><a href="#fatloss" class="nav-link">Fat Loss</a></li>
+    <li><a href="#fibre" class="nav-link">Fibre Bonus</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="blob b1"></div>
+  <div class="blob b2"></div>
+  <div class="blob b3"></div>
+  <div class="hero-content">
+    <span class="eyebrow">A Beginner's Guide</span>
+    <h1>Understanding <span>Protein</span> — and Why Vegetarians Don't Need to Worry</h1>
+    <p class="sub">A simple, visual walkthrough of protein's role in your body, the best plant &amp; dairy sources, and how it drives muscle growth and fat loss.</p>
+    <div class="scroll-cue">Scroll to begin<div class="arrow"></div></div>
+  </div>
+</header>
+
+<main>
+
+  <!-- SECTION 1: WHY PROTEIN -->
+  <section class="section" id="why">
+    <div class="divider reveal"><div class="num-badge">1</div></div>
+    <span class="section-tag reveal">The Basics</span>
+    <h2 class="reveal">Why does protein matter so much?</h2>
+    <p class="lead reveal">Protein is one of three macronutrients (along with carbs and fat) — but it's the only one your body can't store for later. It's made of amino acids, the "building blocks" your body uses constantly to repair and grow.</p>
+
+    <div class="card-grid reveal-stagger">
+      <div class="card">
+        <div class="icon">💪</div>
+        <h3>Builds &amp; repairs muscle</h3>
+        <p>Every workout creates tiny tears in muscle fibre. Protein supplies the amino acids used to repair and grow them back stronger.</p>
+      </div>
+      <div class="card">
+        <div class="icon">🧬</div>
+        <h3>Makes enzymes &amp; hormones</h3>
+        <p>Insulin, digestive enzymes, and many hormones are literally built from protein — your metabolism depends on it.</p>
+      </div>
+      <div class="card">
+        <div class="icon">🛡️</div>
+        <h3>Powers your immune system</h3>
+        <p>Antibodies that fight infection are proteins. Low intake can quietly weaken your immunity.</p>
+      </div>
+      <div class="card">
+        <div class="icon">🍽️</div>
+        <h3>Keeps you full longer</h3>
+        <p>Protein is the most satiating macronutrient — it slows digestion and curbs hunger hormones, helping control appetite.</p>
+      </div>
+      <div class="card">
+        <div class="icon">🦴</div>
+        <h3>Supports bones &amp; skin</h3>
+        <p>Collagen and keratin — key structural proteins — keep skin, hair, nails, and bones strong.</p>
+      </div>
+      <div class="card">
+        <div class="icon">🔋</div>
+        <h3>Backup energy source</h3>
+        <p>When carbs run low, your body can break down protein for energy — though that's not its main job.</p>
+      </div>
+    </div>
+
+    <div class="note reveal">
+      <strong>Beginner tip:</strong> A common starting target is about <strong>0.8–1.2g of protein per kg of body weight</strong> for general health, and <strong>1.6–2.2g/kg</strong> if you're actively trying to build muscle. These are general guidelines — individual needs vary.
+    </div>
+  </section>
+
+  <!-- SECTION 2: SOURCES CHART -->
+  <section class="section alt" id="sources">
+    <div class="inner">
+      <div class="divider reveal"><div class="num-badge">2</div></div>
+      <span class="section-tag reveal">Comparison Chart</span>
+      <h2 class="reveal">Best vegetarian protein sources</h2>
+      <p class="lead reveal">Here's how popular vegetarian foods stack up in grams of protein per 100g. Bars animate in as you scroll — hover for exact values.</p>
+
+      <div class="chart-wrap reveal" id="chartWrap">
+        <div id="chartContainer"></div>
+        <div class="legend-line">
+          <div><span class="legend-dot" style="background:var(--yellow-dark)"></span>Top-tier sources (20g+)</div>
+          <div><span class="legend-dot" style="background:var(--blue)"></span>Other strong sources</div>
+        </div>
+      </div>
+
+      <div class="chart-note reveal">
+        Values are per 100g, measured in the <strong>raw/dry form</strong> for legumes, grains, nuts &amp; seeds (they hold water once cooked, which lowers protein-per-100g), and <strong>as-consumed</strong> for dairy products. Figures are typical averages and can vary slightly by brand or variety.
+      </div>
+
+      <div class="note blue reveal">
+        <strong>Smart combo tip:</strong> Plant proteins are often "incomplete" (missing one or more essential amino acids). Pairing two sources gives you all of them — a classic vegetarian trick.
+      </div>
+      <div class="combo-grid reveal-stagger">
+        <div class="combo">Rice + Dal (lentils)<span>Classic complete protein combo</span></div>
+        <div class="combo">Whole wheat roti + Rajma<span>Grain + legume pairing</span></div>
+        <div class="combo">Hummus + Whole wheat pita<span>Chickpeas + grain</span></div>
+        <div class="combo">Peanut butter + Oats<span>Legume + grain</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 3: MUSCLE GROWTH -->
+  <section class="section" id="muscle">
+    <div class="divider reveal"><div class="num-badge">3</div></div>
+    <span class="section-tag reveal">The Science, Simplified</span>
+    <h2 class="reveal">How protein fuels muscle growth</h2>
+    <p class="lead reveal">Muscle growth (technically "muscle protein synthesis") is a step-by-step process. Here's the simple version:</p>
+
+    <div class="timeline">
+      <div class="step reveal">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <h4>Training creates micro-damage</h4>
+          <p>Resistance exercise (weights, bodyweight training) creates tiny, controlled tears in muscle fibres. This is a normal, necessary trigger for growth.</p>
+        </div>
+      </div>
+      <div class="step reveal">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <h4>Protein breaks down into amino acids</h4>
+          <p>Digestion breaks dietary protein into individual amino acids — especially <strong>leucine</strong>, which acts like a "switch" that turns on muscle repair.</p>
+        </div>
+      </div>
+      <div class="step reveal">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <h4>Muscle protein synthesis (MPS) kicks in</h4>
+          <p>Your body uses those amino acids to repair damaged fibres and add new proteins to the muscle — making it slightly bigger and stronger than before.</p>
+        </div>
+      </div>
+      <div class="step reveal">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <h4>Repeat consistently → visible growth</h4>
+          <p>One workout + one meal won't build noticeable muscle. It's the repeated cycle of training and adequate protein, over weeks and months, that compounds into real results.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="stat-row reveal-stagger">
+      <div class="stat-box"><div class="stat-num">20–30g</div><div class="stat-label">Protein per meal to trigger MPS well</div></div>
+      <div class="stat-box"><div class="stat-num">3–4</div><div class="stat-label">Meals/day to spread protein evenly</div></div>
+      <div class="stat-box"><div class="stat-num">1.6–2.2g</div><div class="stat-label">Per kg bodyweight for muscle building</div></div>
+    </div>
+
+    <div class="note reveal"><strong>Beginner tip:</strong> Spreading protein across the day (rather than one huge meal) helps your body use it more effectively for repair and growth.</div>
+  </section>
+
+  <!-- SECTION 4: FAT LOSS -->
+  <section class="section alt" id="fatloss">
+    <div class="inner">
+      <div class="divider reveal"><div class="num-badge">4</div></div>
+      <span class="section-tag reveal">The Science, Simplified</span>
+      <h2 class="reveal">How protein supports fat loss</h2>
+      <p class="lead reveal">Protein doesn't "burn fat" directly — but it makes fat loss easier and more sustainable in three key ways:</p>
+
+      <div class="timeline">
+        <div class="step reveal">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <h4>Higher thermic effect</h4>
+            <p>Your body burns more calories digesting protein (~20-30% of its calories) compared to carbs (~5-10%) or fat (~0-3%). More digestion effort = more calories used.</p>
+          </div>
+        </div>
+        <div class="step reveal">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <h4>Keeps hunger in check</h4>
+            <p>Protein boosts satiety hormones and slows stomach emptying, so you naturally feel fuller — making it easier to eat fewer calories without constant hunger.</p>
+          </div>
+        </div>
+        <div class="step reveal">
+          <div class="step-num">3</div>
+          <div class="step-body">
+            <h4>Protects muscle during a calorie deficit</h4>
+            <p>When eating less, your body can break down muscle for energy. Enough protein signals your body to preserve muscle and lose fat instead.</p>
+          </div>
+        </div>
+        <div class="step reveal">
+          <div class="step-num">4</div>
+          <div class="step-body">
+            <h4>Result: a leaner, more defined look</h4>
+            <p>Losing fat while keeping muscle is what creates visible "toning" — not just a lower number on the scale.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="note blue reveal"><strong>Beginner tip:</strong> Fat loss ultimately depends on a calorie deficit — protein simply makes that deficit easier to sustain and protects your hard-earned muscle while you're in it.</div>
+    </div>
+  </section>
+
+  <!-- BONUS: FIBRE -->
+  <section class="section" id="fibre">
+    <div class="divider reveal"><div class="num-badge">★</div></div>
+    <span class="section-tag reveal">Quick Add-on</span>
+    <h2 class="reveal">Bonus: Fibre — protein's quiet partner</h2>
+    <p class="lead reveal">Fibre doesn't build muscle, but it keeps digestion, blood sugar, and heart health in check — and most high-protein vegetarian foods (legumes, whole grains) already contain it.</p>
+
+    <div class="bonus-banner reveal">
+      <div class="fibre-grid">
+        <div>
+          <div class="fibre-type">
+            <h5>Soluble fibre</h5>
+            <p>Dissolves in water, forms a gel. Slows digestion, helps control blood sugar and cholesterol. Found in oats, beans, apples.</p>
+          </div>
+          <div class="fibre-type">
+            <h5>Insoluble fibre</h5>
+            <p>Doesn't dissolve — adds bulk and speeds food through the gut. Supports regularity. Found in whole wheat, vegetable skins, nuts.</p>
+          </div>
+          <p style="font-size:0.85rem;color:#c9d2db;margin-top:10px;">General target: <strong style="color:var(--yellow)">25–30g of fibre per day</strong> for most adults.</p>
+        </div>
+        <div>
+          <ul class="fibre-list">
+            <li>Chia seeds (100g) <b>~34g</b></li>
+            <li>Lentils, cooked (100g) <b>~8g</b></li>
+            <li>Rajma / kidney beans, cooked (100g) <b>~6.4g</b></li>
+            <li>Chickpeas, cooked (100g) <b>~7.6g</b></li>
+            <li>Oats, dry (100g) <b>~10g</b></li>
+            <li>Almonds (100g) <b>~12.5g</b></li>
+            <li>Whole wheat / atta (100g) <b>~11g</b></li>
+            <li>Pear with skin (100g) <b>~3.1g</b></li>
+            <li>Broccoli, cooked (100g) <b>~3.3g</b></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <h3 style="font-size:1.2rem;margin-bottom:6px;">Quick recap</h3>
+  <div class="recap-chips">
+    <div class="chip">Protein repairs &amp; builds</div>
+    <div class="chip">Combine plant sources for completeness</div>
+    <div class="chip">~20-30g per meal for muscle</div>
+    <div class="chip">Protein aids fat loss via satiety</div>
+    <div class="chip">Pair with 25-30g fibre daily</div>
+  </div>
+  <p class="disclaimer">This guide is for general educational purposes and isn't personalized medical or nutrition advice. If you have specific health goals or conditions, consult a registered dietitian or doctor.</p>
+  <p class="made">Made for a beginner-friendly, visual understanding of protein &amp; fibre.</p>
+</footer>
+
+<script>
+(function(){
+  // ---------- Data: vegetarian protein sources (g per 100g) ----------
+  const proteinData = [
+    { name: "Soybeans (dry)", value: 36 },
+    { name: "Peanuts", value: 26 },
+    { name: "Lentils (dry)", value: 24 },
+    { name: "Kidney beans (dry)", value: 24 },
+    { name: "Almonds", value: 21 },
+    { name: "Chickpeas (dry)", value: 19 },
+    { name: "Pumpkin seeds", value: 19 },
+    { name: "Paneer", value: 18 },
+    { name: "Chia seeds", value: 17 },
+    { name: "Quinoa (dry)", value: 14 },
+    { name: "Oats (dry)", value: 13 },
+    { name: "Greek yogurt", value: 10 },
+    { name: "Tofu (firm)", value: 8 },
+    { name: "Milk (whole)", value: 3.4 }
+  ];
+
+  const maxVal = Math.max(...proteinData.map(d => d.value));
+  const container = document.getElementById('chartContainer');
+
+  proteinData.forEach((d, i) => {
+    const row = document.createElement('div');
+    row.className = 'bar-row' + (d.value >= 20 ? ' top' : '');
+    row.innerHTML = `
+      <div class="bar-label">${d.name}</div>
+      <div class="bar-track"><div class="bar-fill" data-target="${(d.value / maxVal) * 100}" data-value="${d.value}"></div></div>
+      <div class="bar-value">0g</div>
+    `;
+    container.appendChild(row);
+  });
+
+  // ---------- Reveal on scroll ----------
+  const revealEls = document.querySelectorAll('.reveal, .reveal-stagger, .step');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+
+        // Trigger chart animation once chart wrap is visible
+        if (entry.target.id === 'chartWrap') {
+          animateBars();
+        }
+      }
+    });
+  }, { threshold: 0.2 });
+
+  revealEls.forEach(el => io.observe(el));
+
+  function animateBars(){
+    const fills = document.querySelectorAll('.bar-fill');
+    fills.forEach((fill, idx) => {
+      setTimeout(() => {
+        const target = parseFloat(fill.dataset.target);
+        const value = parseFloat(fill.dataset.value);
+        fill.style.width = target + '%';
+        const valueEl = fill.parentElement.nextElementSibling;
+        animateCount(valueEl, value);
+      }, idx * 60);
+    });
+  }
+
+  function animateCount(el, target){
+    let start = 0;
+    const duration = 900;
+    const startTime = performance.now();
+    function step(now){
+      const progress = Math.min((now - startTime) / duration, 1);
+      const current = (progress * target).toFixed(target % 1 !== 0 ? 1 : 0);
+      el.textContent = current + 'g';
+      if (progress < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+
+  // ---------- Progress bar ----------
+  const progressBar = document.getElementById('progress-bar');
+  window.addEventListener('scroll', () => {
+    const scrollTop = window.scrollY;
+    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    const pct = (scrollTop / docHeight) * 100;
+    progressBar.style.width = pct + '%';
+  });
+
+  // ---------- Scrollspy nav ----------
+  const sections = document.querySelectorAll('main .section, header.hero');
+  const navLinks = document.querySelectorAll('.nav-link');
+  const spy = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const id = entry.target.getAttribute('id');
+        navLinks.forEach(link => {
+          link.classList.toggle('active', link.getAttribute('href') === '#' + id);
+        });
+      }
+    });
+  }, { threshold: 0.4, rootMargin: '-80px 0px -40% 0px' });
+  sections.forEach(sec => { if (sec.id) spy.observe(sec); });
+
+  // ---------- Mobile menu ----------
+  const menuToggle = document.getElementById('menuToggle');
+  const navLinksEl = document.getElementById('navLinks');
+  menuToggle.addEventListener('click', () => navLinksEl.classList.toggle('open'));
+  navLinksEl.querySelectorAll('a').forEach(a => a.addEventListener('click', () => navLinksEl.classList.remove('open')));
+
+})();
+</script>
+
+</body>
+</html>
